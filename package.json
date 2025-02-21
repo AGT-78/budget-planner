@@ -1,7 +1,7 @@
 {
   "name": "budget-planner-app",
   "version": "1.0.0",
-  "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "parcel index.html",
@@ -12,7 +12,9 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
-    "parcel": "^2.13.3"
+    "buffer": "^6.0.3",
+    "parcel": "^2.13.3",
+    "process": "^0.11.10"
   },
   "dependencies": {
     "firebase": "^11.3.1",

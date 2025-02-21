@@ -1,3 +1,31 @@
+import { initializeApp } from "firebase/app";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  getDocs,
+  deleteDoc,
+  doc,
+  onSnapshot,
+  serverTimestamp,
+  query,
+  orderBy,
+} from "firebase/firestore";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyD5piWLPpu079Ty0iKjcVDibhHnJS3FBXY",
+  authDomain: "budget-planner-4a26d.firebaseapp.com",
+  projectId: "budget-planner-4a26d",
+  storageBucket: "budget-planner-4a26d.firebasestorage.app",
+  messagingSenderId: "784453800479",
+  appId: "1:784453800479:web:e256b8650f926f7d087b2a",
+  measurementId: "G-XN4Y36TCQT",
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
 document.addEventListener("DOMContentLoaded", () => {
   const budgetForm = document.getElementById("budget-form");
   const capitalAmountInput = document.getElementById("amount");
@@ -11,7 +39,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let totalBudget = 0;
   let totalExpenses = 0;
-  let expenses = [];
 
   // Function to update budget summary
   function updateBudgetSummary() {
@@ -22,32 +49,56 @@ document.addEventListener("DOMContentLoaded", () => {
     ).toFixed(2)}`;
   }
 
-  // Function to add expense
-  function addExpense(amount, description, category) {
-    const expenseItem = document.createElement("li");
-    expenseItem.innerHTML = `<strong>${category}</strong>  $${amount.toFixed(
-      2
-    )}<br><small>Spent on ${description}</small>`;
-    expenseItem.addEventListener("click", () =>
-      removeExpense(amount, expenseItem)
-    );
-
-    expenseList.appendChild(expenseItem);
-
-    expenses.push({ amount, description, category });
-    totalExpenses += amount;
-    updateBudgetSummary();
+  // Function to add expense to Firestore
+  async function addExpense(amount, description, category) {
+    try {
+      await addDoc(collection(db, "expenses"), {
+        amount: amount,
+        description: description,
+        category: category,
+        timestamp: serverTimestamp(),
+      });
+    } catch (error) {
+      console.error("Error adding expense: ", error);
+    }
   }
 
-  // Function to remove expense
-  function removeExpense(amount, element) {
-    totalExpenses -= amount;
-    expenseList.removeChild(element);
-    updateBudgetSummary();
+  // Function to remove expense from Firestore
+  async function removeExpense(expenseId, element) {
+    try {
+      await deleteDoc(doc(db, "expenses", expenseId));
+      element.remove();
+    } catch (error) {
+      console.error("Error deleting expense: ", error);
+    }
+  }
+
+  // Function to load expenses from Firestore in real-time
+  function loadExpenses() {
+    const q = query(collection(db, "expenses"), orderBy("timestamp", "desc"));
+    onSnapshot(q, (snapshot) => {
+      expenseList.innerHTML = "";
+      totalExpenses = 0;
+      snapshot.forEach((doc) => {
+        let expense = doc.data();
+        let expenseItem = document.createElement("li");
+        expenseItem.innerHTML = `<strong>${
+          expense.category
+        }</strong> - $${expense.amount.toFixed(2)}<br><small>Spent on ${
+          expense.description
+        }</small>`;
+        expenseItem.addEventListener("click", () =>
+          removeExpense(doc.id, expenseItem)
+        );
+        expenseList.appendChild(expenseItem);
+        totalExpenses += expense.amount;
+      });
+      updateBudgetSummary();
+    });
   }
 
   // Handle form submission
-  budgetForm.addEventListener("submit", (event) => {
+  budgetForm.addEventListener("submit", async (event) => {
     event.preventDefault();
 
     const capitalAmount = parseFloat(capitalAmountInput.value);
@@ -66,7 +117,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     totalBudget = capitalAmount; // Set capital amount as total budget
-    addExpense(expenseAmount, description, category);
+    await addExpense(expenseAmount, description, category);
 
     // Clear input fields
     capitalAmountInput.value = "";
@@ -75,6 +126,7 @@ document.addEventListener("DOMContentLoaded", () => {
     categoryInput.value = "food";
   });
 
-  // Initialize budget summary
+  // Load expenses on page load
+  loadExpenses();
   updateBudgetSummary();
 });
