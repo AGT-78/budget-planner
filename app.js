@@ -11,6 +11,9 @@ import {
   query,
   orderBy,
 } from "firebase/firestore";
+import log from "loglevel";
+
+log.info("Budget Planner App initializing...");
 
 const sw = new URL("service-worker.js", import.meta.url);
 if ("serviceWorker" in navigator) {
@@ -19,14 +22,14 @@ if ("serviceWorker" in navigator) {
     scope: "/budget-planner/",
   })
     .then((_) =>
-      console.log(
+      log.info(
         "Service Worker Registered for scope:",
         sw.href,
         "with",
         import.meta.url
       )
     )
-    .catch((err) => console.error("Service Worker Error:", err));
+    .catch((err) => log.error("Service Worker Error:", err));
 }
 
 const firebaseConfig = {
@@ -42,8 +45,10 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+log.info("Firebase initialized");
 
 document.addEventListener("DOMContentLoaded", () => {
+  log.info("DOM fully loaded, initializing budget planner...");
   const budgetForm = document.getElementById("budget-form");
   const capitalAmountInput = document.getElementById("amount");
   const expenseAmountInput = document.getElementById("expense");
@@ -59,45 +64,60 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Function to update budget summary
   function updateBudgetSummary() {
+    log.debug("Updating budget summary...");
     totalBudgetDisplay.textContent = `CA$ ${totalBudget.toFixed(2)}`;
     totalExpensesDisplay.textContent = `CA$ ${totalExpenses.toFixed(2)}`;
     remainingBalanceDisplay.textContent = `CA$ ${(
       totalBudget - totalExpenses
     ).toFixed(2)}`;
+    log.info("Budget Updated");
   }
 
   // Function to add expense to Firestore
   async function addExpense(amount, description, category) {
     try {
-      await addDoc(collection(db, "expenses"), {
-        amount: amount,
-        description: description,
-        category: category,
-        timestamp: serverTimestamp(),
+      log.debug("Adding expense to Firestore:", {
+        amount,
+        description,
+        category,
       });
+      await addDoc(
+        collection(db, "expenses"),
+        {
+          amount: amount,
+          description: description,
+          category: category,
+          timestamp: serverTimestamp(),
+        },
+        log.info("Expense added successfully")
+      );
     } catch (error) {
-      console.error("Error adding expense: ", error);
+      log.error("Error adding expense: ", error);
     }
   }
 
   // Function to remove expense from Firestore
   async function removeExpense(expenseId, element) {
     try {
+      log.debug("Removing expense:", expenseId);
       await deleteDoc(doc(db, "expenses", expenseId));
       element.remove();
+      log.info(`Expense with ID ${expenseId} removed successfully`);
     } catch (error) {
-      console.error("Error deleting expense: ", error);
+      log.error("Error deleting expense: ", error);
     }
   }
 
   // Function to load expenses from Firestore in real-time
   function loadExpenses() {
+    log.info("Loading expenses from Firestore...");
     const q = query(collection(db, "expenses"), orderBy("timestamp", "desc"));
     onSnapshot(q, (snapshot) => {
       expenseList.innerHTML = "";
       totalExpenses = 0;
       snapshot.forEach((doc) => {
         let expense = doc.data();
+        log.debug("Fetched Expense:", expense);
         let expenseItem = document.createElement("li");
         expenseItem.innerHTML = `<strong>${
           expense.category
@@ -111,6 +131,7 @@ document.addEventListener("DOMContentLoaded", () => {
         totalExpenses += expense.amount;
       });
       updateBudgetSummary();
+      log.info("Expenses loaded successfully");
     });
   }
 
@@ -124,14 +145,26 @@ document.addEventListener("DOMContentLoaded", () => {
     const category = categoryInput.value;
 
     if (isNaN(capitalAmount) || capitalAmount <= 0) {
+      log.warn("Invalid capital amount entered:", capitalAmount);
       alert("Please enter a valid capital amount.");
       return;
     }
 
     if (isNaN(expenseAmount) || expenseAmount <= 0 || description === "") {
+      log.warn("Invalid expense details entered:", {
+        expenseAmount,
+        description,
+      });
       alert("Please enter valid expense details.");
       return;
     }
+
+    log.info("Adding new expense:", {
+      capitalAmount,
+      expenseAmount,
+      description,
+      category,
+    });
 
     totalBudget = capitalAmount; // Set capital amount as total budget
     await addExpense(expenseAmount, description, category);
@@ -141,9 +174,15 @@ document.addEventListener("DOMContentLoaded", () => {
     expenseAmountInput.value = "";
     descriptionInput.value = "";
     categoryInput.value = "food";
+    log.info("Expense added and form cleared");
   });
 
   // Load expenses on page load
   loadExpenses();
   updateBudgetSummary();
+});
+
+// Global error logging
+window.addEventListener("error", function (event) {
+  log.error("Global Error occurred: ", event.message);
 });
