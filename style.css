@@ -46,9 +46,46 @@ nav ul li a {
     border-radius: 5px;
 }
 
-/* Hero Section */
-.hero {
-    padding: 100px 20px;
+/* Budget Summary Section */
+.budget-summary {
+    padding: 50px 20px;
+}
+
+.summary-boxes {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.summary-item {
+    background: #1a1a1a;
+    padding: 20px;
+    border-radius: 5px;
+    width: 200px;
+}
+
+/* Input Section */
+.input-section {
+    padding: 50px 20px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+label {
+    margin-top: 10px;
+}
+
+input, select {
+    padding: 10px;
+    margin: 5px 0;
+    width: 80%;
+    max-width: 300px;
+    border-radius: 5px;
+    border: none;
 }
 
 .cta-btn {
@@ -60,6 +97,28 @@ nav ul li a {
     border-radius: 5px;
     display: inline-block;
     margin-top: 20px;
+    cursor: pointer;
+}
+
+/* Expense List Section */
+.expense-list {
+    padding: 50px 20px;
+}
+
+#expense-history {
+    list-style: none;
+    padding: 0;
+    margin: 0 auto;
+    max-width: 500px;
+}
+
+#expense-history li {
+    background: #1a1a1a;
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
 }
 
 /* Footer */
