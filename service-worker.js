@@ -5,8 +5,7 @@ const FILES_TO_CACHE = [
   "/budget-planner/style.css",
   "/budget-planner/app.js",
   "/budget-planner/manifest.json",
-  /* "/budget-planner/icons/icon-128.png", 
-  "/budget-planner/icons/icon-512.png", */
+  "/budget-planner/icons/logo.png",
 ];
 
 // Install event: Caches essential files
