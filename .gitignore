@@ -1,3 +1,5 @@
+.parcel-cache/
+
 # Logs
 logs
 *.log
@@ -30,4 +32,4 @@ tsconfig.node.json
 vite.config.ts
 
 #Ignore parcel cache
-.parcel-ca/
+
