@@ -3,7 +3,7 @@ import {
   getFirestore,
   collection,
   addDoc,
-  getDocs,
+  updateDoc,
   deleteDoc,
   doc,
   onSnapshot,
@@ -96,6 +96,25 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // Function to edit an expense in Firestore
+  async function editExpense(
+    expenseId,
+    newAmount,
+    newDescription,
+    newCategory
+  ) {
+    try {
+      await updateDoc(doc(db, "expenses", expenseId), {
+        amount: newAmount,
+        description: newDescription,
+        category: newCategory,
+      });
+      log.info("Expense updated successfully");
+    } catch (error) {
+      log.error("Error updating expense: ", error);
+    }
+  }
+
   // Function to remove expense from Firestore
   async function removeExpense(expenseId, element) {
     try {
@@ -114,7 +133,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const q = query(collection(db, "expenses"), orderBy("timestamp", "desc"));
     onSnapshot(q, (snapshot) => {
       expenseList.innerHTML = "";
-      totalExpenses = 0;
+      let totalExpenses = 0;
       snapshot.forEach((doc) => {
         let expense = doc.data();
         log.debug("Fetched Expense:", expense);
@@ -124,14 +143,44 @@ document.addEventListener("DOMContentLoaded", () => {
         }</strong> - $${expense.amount.toFixed(2)}<br><small>Spent on ${
           expense.description
         }</small>`;
-        expenseItem.addEventListener("click", () =>
+
+        let editButton = document.createElement("button");
+        editButton.className = "btn";
+        editButton.textContent = "Edit";
+        editButton.addEventListener("click", () => {
+          let newAmount = parseFloat(
+            prompt("Enter new amount:", expense.amount)
+          );
+          let newDescription = prompt(
+            "Enter new description:",
+            expense.description
+          );
+          let newCategory = prompt("Enter new category:", expense.category);
+
+          if (
+            !isNaN(newAmount) &&
+            newAmount > 0 &&
+            newDescription.trim() !== ""
+          ) {
+            editExpense(doc.id, newAmount, newDescription, newCategory);
+          } else {
+            alert("Invalid input, please try again.");
+          }
+        });
+
+        let deleteButton = document.createElement("button");
+        deleteButton.className = "btn";
+        deleteButton.textContent = "Delete";
+        deleteButton.addEventListener("click", () =>
           removeExpense(doc.id, expenseItem)
         );
+
+        expenseItem.appendChild(editButton);
+        expenseItem.appendChild(deleteButton);
         expenseList.appendChild(expenseItem);
         totalExpenses += expense.amount;
       });
-      updateBudgetSummary();
-      log.info("Expenses loaded successfully");
+      updateBudgetSummary(0, totalExpenses);
     });
   }
 
@@ -166,7 +215,7 @@ document.addEventListener("DOMContentLoaded", () => {
       category,
     });
 
-    totalBudget = capitalAmount; // Set capital amount as total budget
+    totalBudget = capitalAmount;
     await addExpense(expenseAmount, description, category);
 
     // Clear input fields

@@ -29,3 +29,5 @@ tsconfig.json
 tsconfig.node.json
 vite.config.ts
 
+#Ignore parcel cache
+.parcel-ca/
