@@ -20,7 +20,7 @@
     </header>
 
     <main>
-      <!-- Budget Summary Section -->
+      <!-- Budget Details Section -->
       <section class="budget-summary">
         <h1>Budget Overview</h1>
         <div class="summary-boxes">
@@ -41,49 +41,63 @@
 
       <!-- Input Section -->
       <section class="input-section">
-        <h1>Plan Your Budget</h1>
-        <form id="budget-form">
-          <label for="amount">Capital Amount:</label>
-          <input
-            type="number"
-            id="amount"
-            placeholder="Capital Amt."
-            required
-          />
+        <div id="input-fields-container">
+          <h1>Plan Your Budget</h1>
+          <form id="budget-form">
+            <label for="amount">Capital Amount:</label>
+            <input
+              type="number"
+              id="amount"
+              placeholder="Capital Amt."
+              required
+            />
 
-          <label for="expense">Expense Amount:</label>
-          <input type="text" id="expense" placeholder="Expense Amt." required />
+            <label for="expense">Expense Amount:</label>
+            <input
+              type="text"
+              id="expense"
+              placeholder="Expense Amt."
+              required
+            />
 
-          <label for="description">Expense Description:</label>
+            <label for="description">Expense Description:</label>
+            <input
+              type="text"
+              id="description"
+              placeholder="Summarize Your Expense"
+            />
+
+            <label for="category">Select Category:</label>
+            <select id="category" required>
+              <option value="Food">Food</option>
+              <option value="Rent">Rent</option>
+              <option value="Transport">Transport</option>
+              <option value="Entertainment">Entertainment</option>
+            </select>
+
+            <button type="submit" class="cta-btn">Add Expense</button>
+          </form>
+        </div>
+
+        <!-- Chatbot Container -->
+        <div id="chatbot-container">
+          <div id="chat-history"></div>
           <input
             type="text"
-            id="description"
-            placeholder="Summarize Your Expense"
+            id="chat-input"
+            placeholder="Ask something about your budget..."
           />
-
-          <label for="category">Select Category:</label>
-          <select id="category" required>
-            <option value="Food">Food</option>
-            <option value="Rent">Rent</option>
-            <option value="Transport">Transport</option>
-            <option value="Entertainment">Entertainment</option>
-          </select>
-
-          <button type="submit" class="cta-btn">Add Expense</button>
-        </form>
+          <button id="send-btn">Send</button>
+        </div>
       </section>
 
       <!-- Expense List Section -->
       <section class="expense-list">
         <h1>Expense History</h1>
         <ul id="expense-history">
-          <!-- Expense items will be dynamically added here -->
+          <!-- list items displayed dynamically -->
         </ul>
       </section>
     </main>
-
-    <footer>
-      <p>&copy; 2025 Budget Planner. All rights reserved.</p>
-    </footer>
   </body>
 </html>
