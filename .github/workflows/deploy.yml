@@ -21,8 +21,8 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Run lint
-        run: npm run lint 
+      - name: Run lint (Allow Warnings)
+        run: npm run lint
 
       - name: Build project
         run: npm run build
