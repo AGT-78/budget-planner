@@ -1,4 +1,4 @@
-/* Body Styles */
+/* General Styles */
 body {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -39,16 +39,24 @@ header {
 }
 
 
-.btn {
-    padding: 10px 15px;
-    margin-right: 2px;
-    background-color: #8a2be2;
-    color: white;
-    border: none;
-    border-radius: 5px;
+/* Navigation */
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 20px;
 }
 
-/* Budget Summary-Section */
+nav ul li {
+    display: inline-block;
+}
+
+nav ul li a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+/* Budget Summary Section */
 .budget-summary {
     padding: 50px 20px;
 }
@@ -57,6 +65,7 @@ header {
     display: flex;
     justify-content: center;
     gap: 20px;
+    flex-wrap: wrap;
 }
 
 .summary-item {
@@ -64,16 +73,17 @@ header {
     padding: 20px;
     border-radius: 5px;
     width: 200px;
+    text-align: center;
 }
 
-/* input-form */
+/* Form Input Section */
 .input-section {
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    gap: 100px; 
+    gap: 50px;
     padding: 50px 20px;
-    position: relative;
+    flex-wrap: wrap;
 }
 
 #input-fields-container {
@@ -94,7 +104,8 @@ label {
     margin-top: 10px;
 }
 
-input, select {
+input,
+select {
     padding: 10px;
     margin: 5px 0;
     width: 80%;
@@ -103,6 +114,16 @@ input, select {
     border: none;
 }
 
+.btn {
+    padding: 10px 15px;
+    margin-right: 2px;
+    background-color: #8a2be2;
+    color: white;
+    border: none;
+    border-radius: 5px;
+}
+
+/* Call-to-Action Button */
 .cta-btn {
     padding: 15px 25px;
     background-color: #8a2be2;
@@ -115,7 +136,7 @@ input, select {
     cursor: pointer;
 }
 
-/* Expense-List Section */
+/* Expense List Section */
 .expense-list {
     padding: 50px 20px;
 }
@@ -143,28 +164,9 @@ input, select {
     border: 2px solid #8a2be2;
     border-radius: 10px;
     padding: 15px;
-    position: absolute;
-    right: 5%;
-    top: 50%;
-    transform: translateY(-50%);
     box-shadow: 0px 4px 10px rgba(138, 43, 226, 0.4);
     color: white;
     font-family: Arial, sans-serif;
-}
-
-/* Responsive adjustments */
-@media (max-width: 1024px) {
-    .input-section {
-        flex-direction: column;
-        align-items: center;
-        gap: 20px;
-    }
-    #chatbot-container {
-        position: relative;
-        right: auto;
-        transform: none;
-        margin-top: 20px;
-    }
 }
 
 /* Chat History */
@@ -191,7 +193,7 @@ input, select {
     font-size: 14px;
 }
 
-/* Chat-bot Send Button */
+/* Chatbot Send Button */
 #send-btn {
     padding: 10px 15px;
     border-radius: 5px;
@@ -229,4 +231,57 @@ input, select {
     color: #ddd;
     text-align: left;
     align-self: flex-start;
+}
+
+/* Responsive Dimensions for Tablets */
+@media (max-width: 1024px) {
+    .input-section {
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+    }
+
+    #chatbot-container {
+        width: 90%;
+        position: relative;
+        right: auto;
+        transform: none;
+        margin-top: 20px;
+    }
+
+    .summary-boxes {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
+/* Responsive Dimensions for Mobile */
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    nav ul {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .summary-boxes {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .input-section {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    #input-fields-container {
+        width: 90%;
+    }
+
+    #chatbot-container {
+        width: 100%;
+    }
 }
